@@ -7,7 +7,7 @@ def lambda_handler(event, context):
     s3_client = boto3.client('s3')
     glue_client = boto3.client('glue')
     
-    bucket = 'your-s3-bucket-unique-name'
+    bucket = 's3-bucket-ubaida-saood'
     key = 'data.json'
 
     try:
