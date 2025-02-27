@@ -10,6 +10,7 @@ resource "aws_ecr_repository" "lambda_repo" {
   name = "s3-to-rds-lambda-repo"
 }
 
+# RDS Instance
 resource "aws_db_instance" "rds" {
   identifier          = "my-rds-instance"
   engine             = "mysql"
@@ -22,42 +23,7 @@ resource "aws_db_instance" "rds" {
   publicly_accessible = true
 }
 
-resource "aws_glue_crawler" "s3_crawler" {
-  database_name = "my_glue_db"
-  name          = "s3-to-glue-crawler"
-  role          = aws_iam_role.glue_role.arn
-  s3_target {
-    path = aws_s3_bucket.data_bucket.bucket
-  }
-}
-
-resource "aws_glue_catalog_database" "glue_db" {
-  name = "my_glue_db"
-}
-
-resource "aws_iam_role" "glue_role" {
-  name = "glue-crawler-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = { Service = "glue.amazonaws.com" }
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "glue_policy" {
-  role   = aws_iam_role.glue_role.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      { Effect = "Allow", Action = "s3:*", Resource = "*" },
-      { Effect = "Allow", Action = "glue:*", Resource = "*" }
-    ]
-  })
-}
-
+# Lambda Function
 resource "aws_lambda_function" "s3_to_rds_lambda" {
   function_name = "s3-to-rds-lambda"
   role          = aws_iam_role.lambda_role.arn
@@ -93,7 +59,6 @@ resource "aws_iam_role_policy" "lambda_policy" {
     Version = "2012-10-17"
     Statement = [
       { Effect = "Allow", Action = "s3:*", Resource = "*" },
-      { Effect = "Allow", Action = "glue:*", Resource = "*" },
       { Effect = "Allow", Action = "logs:*", Resource = "*" }
     ]
   })
