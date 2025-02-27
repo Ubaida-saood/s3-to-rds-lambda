@@ -5,7 +5,6 @@ import os
 
 def lambda_handler(event, context):
     s3_client = boto3.client('s3')
-    glue_client = boto3.client('glue')
     
     bucket = 's3-bucket-ubaida-saood'
     key = 'data.json'
@@ -31,9 +30,4 @@ def lambda_handler(event, context):
         conn.close()
         return {'statusCode': 200, 'body': 'Data pushed to RDS'}
     except Exception as e:
-        print(f"RDS failed: {str(e)}")
-        try:
-            glue_client.start_crawler(Name='s3-to-glue-crawler')
-            return {'statusCode': 200, 'body': 'Data pushed to Glue crawler'}
-        except Exception as glue_e:
-            return {'statusCode': 500, 'body': f"Glue failed: {str(glue_e)}"}
+        return {'statusCode': 500, 'body': f"RDS failed: {str(e)}"}
