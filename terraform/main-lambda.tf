@@ -1,4 +1,3 @@
-# Lambda Function (depends on the image being built and pushed)
 resource "aws_lambda_function" "s3_to_rds_lambda" {
   function_name = "s3-to-rds-lambda"
   role          = aws_iam_role.lambda_role.arn
