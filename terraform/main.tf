@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "data_bucket" {
-  bucket = "my-s3-bucket-20250227-tushar-123"
+  bucket = "my-s3-bucket-ubaida-saood"
 }
 
 # ECR Repository
