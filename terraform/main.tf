@@ -3,9 +3,10 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "data_bucket" {
-  bucket = "s3-bucket-ubaida-saood"
+  bucket = "my-s3-bucket-20250227-tushar-123"
 }
 
+# ECR Repository
 resource "aws_ecr_repository" "lambda_repo" {
   name = "s3-to-rds-lambda-repo"
 }
@@ -23,24 +24,7 @@ resource "aws_db_instance" "rds" {
   publicly_accessible = true
 }
 
-# Lambda Function
-resource "aws_lambda_function" "s3_to_rds_lambda" {
-  function_name = "s3-to-rds-lambda"
-  role          = aws_iam_role.lambda_role.arn
-  package_type  = "Image"
-  image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
-  timeout       = 60
-
-  environment {
-    variables = {
-      RDS_HOST     = aws_db_instance.rds.address
-      RDS_USER     = "admin"
-      RDS_PASSWORD = "SecurePassword123!"
-      RDS_DB       = "testdb"
-    }
-  }
-}
-
+# IAM Role for Lambda
 resource "aws_iam_role" "lambda_role" {
   name = "lambda-execution-role"
   assume_role_policy = jsonencode({
@@ -64,6 +48,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
   })
 }
 
+# Output ECR Repository URL for the pipeline
 output "ecr_repo_url" {
   value = aws_ecr_repository.lambda_repo.repository_url
 }
